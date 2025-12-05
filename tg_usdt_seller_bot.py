@@ -203,7 +203,7 @@ async def screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text("📥 Payment Submitted. Admin verify karega!")
 
-async def main():
+def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -212,8 +212,7 @@ async def main():
     app.add_handler(MessageHandler(filters.PHOTO, screenshot))
     app.add_handler(CallbackQueryHandler(callback))
 
-    await app.run_polling(close_loop=False)
+    app.run_polling()
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    main()
