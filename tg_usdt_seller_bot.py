@@ -89,7 +89,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 🔢 Limits:
 Min {MIN_USDT} — Max {MAX_USDT} USDT
 
-👇 BUY button press kijiye ya amount type karein
+👇 BUY button press kijiye ya amount type kariye 
 """,
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode="Markdown"
@@ -126,7 +126,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
 
         return await update.message.reply_text(
-            f"USDT: {usdt}\nAmount: ₹{amount}\nNetwork choose karein 👇",
+            f"USDT: {usdt}\nAmount: ₹{amount}\nNetwork choose keriye 👇",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
@@ -153,8 +153,8 @@ Network: {network}
 Wallet: `{wallet}`
 Amount: ₹{amount}
 
-⏳ 30 minutes me payment karein
-📤 Payment screenshot yahin bhejein
+⏳ 30 minutes me payment karo..
+📤 Payment screenshot yahi bhejo...
 """
         return await update.message.reply_photo(QR_URL, caption=caption, parse_mode="Markdown")
 
