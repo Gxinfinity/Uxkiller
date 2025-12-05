@@ -10,7 +10,6 @@ from telegram.ext import (
 )
 import sqlite3
 import time
-import asyncio
 
 BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
 
@@ -51,10 +50,7 @@ CREATE TABLE IF NOT EXISTS orders(
 db.commit()
 
 def price_calculator(usdt):
-    if usdt <= 100:
-        return int(usdt * 97)
-    else:
-        return int(usdt * 96)
+    return int(usdt * 97) if usdt <= 100 else int(usdt * 96)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("👋 Welcome to the USDT Selling Bot!\n\n➡ Use /sell to order USDT")
@@ -63,12 +59,10 @@ async def sell(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Kitna USDT chahiye? (Only Number)")
 
 async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-
-    if not text.isdigit():
+    if not update.message.text.isdigit():
         return
 
-    usdt = float(text)
+    usdt = float(update.message.text)
     amount = price_calculator(usdt)
 
     keyboard = [
@@ -94,8 +88,8 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data[0] == "net":
         network, usdt, amount = data[1], float(data[2]), int(data[3])
-        await query.message.reply_text("Apna crypto wallet address bhejo:")
         context.user_data["order"] = (network, usdt, amount)
+        await query.message.reply_text("Apna crypto wallet address bhejo:")
 
     elif data[0] == "admin":
         action, order_id = data[1], int(data[2])
@@ -106,16 +100,11 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
         user_id = row[0]
+        msg = "🎉 USDT Released Successfully!" if action == "approve" else "❌ Order Cancelled"
 
-        if action == "approve":
-            msg = "🎉 USDT Released Successfully!"
-            cursor.execute("UPDATE orders SET status='APPROVED' WHERE order_id=?", (order_id,))
-
-        if action == "cancel":
-            msg = "❌ Order Cancelled"
-            cursor.execute("UPDATE orders SET status='CANCELLED' WHERE order_id=?", (order_id,))
-
+        cursor.execute("UPDATE orders SET status=? WHERE order_id=?", (msg.split()[1], order_id))
         db.commit()
+
         await context.bot.send_message(user_id, msg)
         await query.edit_message_text(f"Admin: {msg}")
 
@@ -129,12 +118,15 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cursor.execute("""
     INSERT INTO orders(user_id, username, usdt, network, wallet, amount, status, timestamp)
     VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?)
-    """, (update.message.from_user.id, update.message.from_user.username, usdt, network, wallet, amount, int(time.time())))
+    """, (update.message.from_user.id, update.message.from_user.username,
+          usdt, network, wallet, amount, int(time.time())))
     db.commit()
 
     order_id = cursor.lastrowid
 
-    msg = f"""
+    await update.message.reply_photo(
+        QR_URL,
+        caption=f"""
 📌 Order #{order_id}
 USDT: {usdt}
 Network: {network}
@@ -147,30 +139,28 @@ Amount: ₹{amount}
 
 ⏳ Pay within 30 minutes
 📤 Payment Screenshot bhejo
-    """
-
-    await update.message.reply_photo(photo=QR_URL, caption=msg, parse_mode="Markdown")
+""",
+        parse_mode="Markdown"
+    )
 
 async def screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message.photo:
         return
 
-    photo_file_id = update.message.photo[-1].file_id
     user = update.message.from_user
+    photo_id = update.message.photo[-1].file_id
 
     cursor.execute("""
     SELECT order_id FROM orders 
     WHERE user_id=? AND status='PENDING'
     ORDER BY order_id DESC LIMIT 1
     """, (user.id,))
-
     row = cursor.fetchone()
     if not row:
         return
 
     order_id = row[0]
-
-    cursor.execute("UPDATE orders SET screenshot=? WHERE order_id=?", (photo_file_id, order_id))
+    cursor.execute("UPDATE orders SET screenshot=? WHERE order_id=?", (photo_id, order_id))
     db.commit()
 
     keyboard = [
@@ -181,24 +171,25 @@ async def screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await context.bot.send_photo(
-        LOG_GROUP, photo_file_id,
+        LOG_GROUP,
+        photo_id,
         caption=f"📌 Payment Proof\nOrder #{order_id}\nUser @{user.username}",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
     await update.message.reply_text("📥 Payment Submitted. Admin Verify Karega.")
 
-async def main():
+def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("sell", sell))
+    app.add_handler(CallbackQueryHandler(callback))
     app.add_handler(MessageHandler(filters.PHOTO, screenshot))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_msg))
     app.add_handler(MessageHandler(filters.TEXT, wallet))
-    app.add_handler(CallbackQueryHandler(callback))
 
-    await app.run_polling(close_loop=False)
+    app.run_polling()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
