@@ -200,7 +200,7 @@ async def main():
     app.add_handler(MessageHandler(filters.PHOTO, screenshot))
     app.add_handler(CallbackQueryHandler(callback))
 
-    await app.run_polling()
+    asyncio.run(main())
 
 if __name__ == "__main__":
     import asyncio
