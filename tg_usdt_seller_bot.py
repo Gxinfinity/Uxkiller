@@ -14,7 +14,7 @@ BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
 
 ADMINS = [7487670897, 6792736525]
 ADMIN_GROUP_ID = -1003344654667
-SUPPORT_USERNAME = "YourSupportUsername"  # example: CryptoHelpX
+SUPPORT_USERNAME = "pxiSupport"  # example: CryptoHelpX
 
 UPI_ID = "priyanshkumar@bpunity"
 BANK_INFO = """
