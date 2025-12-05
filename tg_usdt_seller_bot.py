@@ -218,8 +218,8 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     kb = InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("✔ Approve", callback_data=f"ADMIN:APPROVE:{order_id}"),
-            InlineKeyboardButton("✖ Cancel", callback_data=f"ADMIN:CANCEL:{order_id}")
+            InlineKeyboardButton("✅ Approve", callback_data=f"ADMIN:APPROVE:{order_id}"),
+            InlineKeyboardButton("❌ Cancel", callback_data=f"ADMIN:CANCEL:{order_id}")
         ]
     ])
 
