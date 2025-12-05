@@ -187,7 +187,7 @@ def main():
     app.add_handler(CallbackQueryHandler(callback))
     app.add_handler(MessageHandler(filters.PHOTO, screenshot))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_msg))
-    app.add_handler(MessageHandler(filters.TEXT, wallet))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, wallet))
 
     app.run_polling()
 
