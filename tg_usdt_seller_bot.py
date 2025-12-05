@@ -169,7 +169,7 @@ async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if q.data.startswith("NET:"):
         context.user_data["network"] = q.data.split(":")[1]
         context.user_data["stage"] = "await_wallet"
-        return await q.message.reply_text("Apna wallet address bhejein:")
+        return await q.message.reply_text("Apna wallet address bhejo:")
 
     if q.data.startswith("ADMIN:"):
         action, order_id = q.data.split(":")[1:]
