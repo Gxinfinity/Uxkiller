@@ -20,17 +20,19 @@ SUPPORT_USERNAME = "pxiSupport"
 MIN_USDT = 10
 MAX_USDT = 50000
 
+# PAYMENT DETAILS (final as you confirmed)
 UPI_ID = "priyanshkumar@bpunity"
-BANK_INFO = """
-🏦 BANK DETAILS:
-Name: PRIYANSH KUMAR
-A/C: 20322227398
-IFSC: FINO0001157
-Bank: Fino Payment Bank
-"""
+BANK_INFO_TEXT = (
+    "🏦 BANK DETAILS:\n"
+    "Name: PRIYANSH KUMAR\n"
+    "A/C: 20322227398\n"
+    "IFSC: FINO0001157\n"
+    "Bank: Fino Payment Bank\n"
+)
 
 QR_URL = "https://graph.org/file/bb11c1622ee16e8e7637e-a8b5bfa3bf9d1fcdcf.jpg"
 LOGO_URL = "https://graph.org/file/3ccf692a7d8ef875255ad-c769ee91e0422550c2.jpg"
+FOOTER_TAG = "💎 Lᴇɢɪᴛ ᴜꜱᴅᴛ ᴅᴇᴀʟꜱ ᴄᴏɴɴᴇᴄᴛ"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -65,10 +67,8 @@ def start_auto_expire(order_id: int):
             db.commit()
     threading.Thread(target=worker, daemon=True).start()
 
-
 def price_calculator(usdt: float) -> int:
     return int(usdt * 97) if usdt <= 100 else int(usdt * 96)
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     kb = [
@@ -146,6 +146,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         start_auto_expire(order_id)
         context.user_data.clear()
 
+        # --- UPDATED CAPTION: includes QR, UPI and Bank details and footer ---
         caption = f"""
 📌 Order #{order_id}
 USDT: {usdt}
@@ -153,11 +154,16 @@ Network: {network}
 Wallet: `{wallet}`
 Amount: ₹{amount}
 
+🏦 PAYMENT DETAILS:
+UPI: {UPI_ID}
+{BANK_INFO_TEXT}
+
 ⏳ 30 minutes me payment karo..
 📤 Payment screenshot yahi bhejo...
+
+{FOOTER_TAG}
 """
         return await update.message.reply_photo(QR_URL, caption=caption, parse_mode="Markdown")
-
 
 async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = update.callback_query
@@ -188,16 +194,28 @@ async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             cursor.execute("UPDATE orders SET status='APPROVED' WHERE order_id=?", (order_id,))
             db.commit()
             await context.bot.send_message(uid, f"🎯 Order #{order_id} Approved — USDT releasing…")
-            await q.message.edit_caption(
-                caption=f"Order #{order_id} ✔ Approved\nBy Admin @{q.from_user.username}"
-            )
+            try:
+                await q.message.edit_caption(
+                    caption=f"Order #{order_id} ✔ Approved\nBy Admin @{q.from_user.username}\n\n{FOOTER_TAG}"
+                )
+            except Exception:
+                try:
+                    await q.message.edit_text(f"Order #{order_id} ✔ Approved\nBy Admin @{q.from_user.username}\n\n{FOOTER_TAG}")
+                except Exception:
+                    pass
         else:
             cursor.execute("UPDATE orders SET status='CANCELLED' WHERE order_id=?", (order_id,))
             db.commit()
             await context.bot.send_message(uid, f"❌ Order #{order_id} Cancelled")
-            await q.message.edit_caption(
-                caption=f"Order #{order_id} ❌ Cancelled\nBy Admin @{q.from_user.username}"
-            )
+            try:
+                await q.message.edit_caption(
+                    caption=f"Order #{order_id} ❌ Cancelled\nBy Admin @{q.from_user.username}\n\n{FOOTER_TAG}"
+                )
+            except Exception:
+                try:
+                    await q.message.edit_text(f"Order #{order_id} ❌ Cancelled\nBy Admin @{q.from_user.username}\n\n{FOOTER_TAG}")
+                except Exception:
+                    pass
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -216,13 +234,25 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     db.commit()
 
     kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Approve", callback_data=f"ADMIN:APPROVE:{order_id}"),
-         InlineKeyboardButton("Cancel", callback_data=f"ADMIN:CANCEL:{order_id}")]
+        [InlineKeyboardButton("✅ Approve", callback_data=f"ADMIN:APPROVE:{order_id}"),
+         InlineKeyboardButton("❌ Cancel", callback_data=f"ADMIN:CANCEL:{order_id}")]
     ])
+
+    # Send proof to admin group with footer
+    admin_caption = (
+        f"Payment Proof #{order_id}\n"
+        f"User @{user.username or user.id}\n"
+        f"USDT: {usdt}\n"
+        f"Network: {network}\n"
+        f"Wallet: `{wallet}`\n"
+        f"Amount: ₹{amount}\n\n"
+        f"{BANK_INFO_TEXT}"
+        f"{FOOTER_TAG}"
+    )
 
     await context.bot.send_photo(
         ADMIN_GROUP_ID, file_id,
-        caption=f"Payment Proof #{order_id}\nUser @{user.username or user.id}\nUSDT: {usdt}\nNetwork: {network}\nWallet: `{wallet}`\n₹{amount}",
+        caption=admin_caption,
         parse_mode="Markdown",
         reply_markup=kb
     )
