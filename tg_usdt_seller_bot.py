@@ -76,8 +76,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🛠 Support", url=f"https://t.me/{SUPPORT_USERNAME}")]
     ]
     await update.message.reply_photo(
-        LOGO_URL,
-        caption=f"""
+    LOGO_URL,
+    caption=f"""
 <blockquote>👋 ꪝ𝑒ℓc𝘰ϻέ Ʈ𝘰 **𝑈ꗟ𝐷Ⲧ کꫀℓℓэ𝚛 ẞօէ**</blockquote>
 <blockquote>⚡ Tʀᴜꜱᴛᴇᴅ | Fᴀꜱᴛ | Sᴇᴄᴜʀᴇ</blockquote>
 
@@ -89,12 +89,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             Mɪɴ {MIN_USDT} — Mᴀx {MAX_USDT} Uꜱᴅᴛ</blockquote>
 
 <blockquote>👇 Bᴜʏ Bᴜᴛᴛᴏɴ Pʀᴇꜱꜱ Kɪᴊɪʏᴇ Yᴀ Aᴍᴏᴜɴᴛ Tʏᴘᴇ Kᴀʀɪʏᴇ</blockquote>
-"""
+""",
+    reply_markup=InlineKeyboardMarkup(kb),
+    parse_mode="HTML"
 )
-        reply_markup=InlineKeyboardMarkup(kb),
-        parse_mode="Markdown"
-    )
-
+        
 async def callback_buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["stage"] = "await_amount"
     await update.callback_query.message.reply_text("Kitna USDT chahiye? (Only number)")
