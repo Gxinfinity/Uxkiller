@@ -90,6 +90,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 <blockquote>👇 Bᴜʏ Bᴜᴛᴛᴏɴ Pʀᴇꜱꜱ Kɪᴊɪʏᴇ Yᴀ Aᴍᴏᴜɴᴛ Tʏᴘᴇ Kᴀʀɪʏᴇ</blockquote>
 """
+)
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode="Markdown"
     )
