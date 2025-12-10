@@ -79,16 +79,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         LOGO_URL,
         caption=f"""
 <blockquote>👋 ꪝ𝑒ℓc𝘰ϻέ Ʈ𝘰 **𝑈ꗟ𝐷Ⲧ کꫀℓℓэ𝚛 ẞօէ**</blockquote>
-<blockquote>⚡ Trusted | Fast | Secure</blockquote>
+<blockquote>⚡ Tʀᴜꜱᴛᴇᴅ | Fᴀꜱᴛ | Sᴇᴄᴜʀᴇ</blockquote>
 
-<blockquote>💵 Price:</blockquote>
-<blockquote>• 1-100 USDT = ₹97
-            • 101+ USDT = ₹96</blockquote>
+<blockquote>💵 Pʀɪᴄᴇ::</blockquote>
+<blockquote>• 1-100 Uꜱᴅᴛ = ₹97
+            • 101+  Uꜱᴅᴛ = ₹96</blockquote>
 
-<blockquote>🔢 Limits:
-            Min {MIN_USDT} — Max {MAX_USDT} USDT</blockquote>
+<blockquote>🔢 Lɪᴍɪᴛꜱ:
+            Mɪɴ {MIN_USDT} — Mᴀx {MAX_USDT} Uꜱᴅᴛ</blockquote>
 
-<blockquote>👇 BUY button press kijiye ya amount type kariye</blockquote>
+<blockquote>👇 Bᴜʏ Bᴜᴛᴛᴏɴ Pʀᴇꜱꜱ Kɪᴊɪʏᴇ Yᴀ Aᴍᴏᴜɴᴛ Tʏᴘᴇ Kᴀʀɪʏᴇ</blockquote>
 """
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode="Markdown"
