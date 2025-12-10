@@ -31,7 +31,7 @@ BANK_INFO_TEXT = (
 )
 
 QR_URL = "https://graph.org/file/bb11c1622ee16e8e7637e-a8b5bfa3bf9d1fcdcf.jpg"
-LOGO_URL = "https://graph.org/file/3ccf692a7d8ef875255ad-c769ee91e0422550c2.jpg"
+LOGO_URL = "https://graph.org/file/4fc1ecca4629e98f0423c-b8af9f9d9c3f9ac655.jpg"
 FOOTER_TAG = "💎 Lᴇɢɪᴛ ᴜꜱᴅᴛ ᴅᴇᴀʟꜱ ᴄᴏɴɴᴇᴄᴛ"
 
 logging.basicConfig(level=logging.INFO)
