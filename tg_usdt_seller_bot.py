@@ -78,19 +78,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         LOGO_URL,
         caption=f"""
-👋 Welcome to **USDT Seller Bot**  
+<blockquote>👋 Welcome to **USDT Seller Bot**</blockquote>
+<blockquote>⚡ Trusted | Fast | Secure</blockquote>
 
-⚡ Trusted | Fast | Secure
+<blockquote>💵 Price:</blockquote>
+<blockquote>• 1-100 USDT = ₹97
+            • 101+ USDT = ₹96</blockquote>
 
-💵 Price:
-• 1-100 USDT = ₹97
-• 101+ USDT = ₹96
+<blockquote>🔢 Limits:
+            Min {MIN_USDT} — Max {MAX_USDT} USDT</blockquote>
 
-🔢 Limits:
-Min {MIN_USDT} — Max {MAX_USDT} USDT
-
-👇 BUY button press kijiye ya amount type kariye 
-""",
+<blockquote>👇 BUY button press kijiye ya amount type kariye</blockquote>
+"""
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode="Markdown"
     )
