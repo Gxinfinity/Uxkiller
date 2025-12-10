@@ -78,7 +78,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         LOGO_URL,
         caption=f"""
-<blockquote>👋 Welcome to **USDT Seller Bot**</blockquote>
+<blockquote>👋 ꪝ𝑒ℓc𝘰ϻέ Ʈ𝘰 **𝑈ꗟ𝐷Ⲧ کꫀℓℓэ𝚛 ẞօէ**</blockquote>
 <blockquote>⚡ Trusted | Fast | Secure</blockquote>
 
 <blockquote>💵 Price:</blockquote>
