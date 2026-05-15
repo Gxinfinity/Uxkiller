@@ -26,7 +26,7 @@ from telegram.ext import (
 
 BOT_TOKEN = ""
 
-ADMINS = [8564072723, 6792736525]
+ADMINS = [8564072723, 6792736525, 8179168001,]
 
 # NEW LOGGER / ADMIN GROUP
 ADMIN_GROUP_ID = -1003933002377
@@ -39,7 +39,7 @@ BOT_NAME = "🌞 Sun Crypto Escrow"
 # LIMITS
 # =========================================================
 
-MIN_USDT = 200
+MIN_USDT = 50
 MAX_USDT = 10000
 
 # =========================================================
