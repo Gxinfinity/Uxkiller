@@ -31,7 +31,7 @@ ADMINS = [8564072723, 6792736525]
 # NEW LOGGER / ADMIN GROUP
 ADMIN_GROUP_ID = -1003933002377
 
-SUPPORT_USERNAME = "USDT_QR"
+SUPPORT_USERNAME = "SunCryptoEscrow"
 
 BOT_NAME = "🌞 Sun Crypto Escrow"
 
@@ -62,7 +62,7 @@ ACCOUNT_NAME = "NARESH SINGH CHAUHAN"
 
 QR_URL = "https://graph.org/file/a02ca4f82476e234e4465-1fa60e811bf5854014.jpg"
 
-LOGO_URL = "https://graph.org/file/4fc1ecca4629e98f0423c-b8af9f9d9c3f9ac655.jpg"
+LOGO_URL = "https://graph.org/file/52009de412b6fa6f88902-0aaa3a3dd322da5d94.jpg"
 
 # =========================================================
 # FOOTER
