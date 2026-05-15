@@ -20,35 +20,66 @@ from telegram.ext import (
     filters,
 )
 
-BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+# =========================================================
+# 🌞 SUN CRYPTO ESCROW
+# =========================================================
 
-ADMINS = [7487670897, 6792736525]
-ADMIN_GROUP_ID = -1003344654667
-SUPPORT_USERNAME = "pxiSupport"
+BOT_TOKEN = ""
 
-MIN_USDT = 30
-MAX_USDT = 50000
+ADMINS = [8564072723, 6792736525]
 
-# =========================
-# PAYMENT DETAILS UPDATED
-# =========================
+# NEW LOGGER / ADMIN GROUP
+ADMIN_GROUP_ID = -1003933002377
+
+SUPPORT_USERNAME = "USDT_QR"
+
+BOT_NAME = "🌞 Sun Crypto Escrow"
+
+# =========================================================
+# LIMITS
+# =========================================================
+
+MIN_USDT = 200
+MAX_USDT = 10000
+
+# =========================================================
+# FIXED PRICE
+# =========================================================
+
+USDT_PRICE = 98
+
+# =========================================================
+# PAYMENT DETAILS
+# =========================================================
 
 UPI_ID = "nareshsinghchauhan1@oksbi"
 
-BANK_INFO_TEXT = (
-    "👤 Name: NARESH SINGH CHAUHAN\n"
-)
+ACCOUNT_NAME = "NARESH SINGH CHAUHAN"
+
+# =========================================================
+# IMAGES
+# =========================================================
 
 QR_URL = "https://graph.org/file/a02ca4f82476e234e4465-1fa60e811bf5854014.jpg"
 
 LOGO_URL = "https://graph.org/file/4fc1ecca4629e98f0423c-b8af9f9d9c3f9ac655.jpg"
 
-FOOTER_TAG = "💎 Lᴇɢɪᴛ ᴜꜱᴅᴛ ᴅᴇᴀʟꜱ ᴄᴏɴɴᴇᴄᴛ"
+# =========================================================
+# FOOTER
+# =========================================================
 
-# =========================
+FOOTER_TAG = "💎 Trusted • Secure • Fastest USDT Deals"
+
+# =========================================================
+# LOGGING
+# =========================================================
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# =========================================================
+# DATABASE
+# =========================================================
 
 db = sqlite3.connect("orders.db", check_same_thread=False)
 cursor = db.cursor()
@@ -62,83 +93,123 @@ CREATE TABLE IF NOT EXISTS orders(
     network TEXT,
     wallet TEXT,
     amount INTEGER,
+    escrow INTEGER,
+    escrow_charge INTEGER,
+    billing TEXT,
     status TEXT,
     timestamp INTEGER,
-    screenshot TEXT,
-    escrow INTEGER DEFAULT 0
+    screenshot TEXT
 )
 """)
 
 db.commit()
 
-
-# =========================
+# =========================================================
 # AUTO EXPIRE
-# =========================
+# =========================================================
 
 def start_auto_expire(order_id: int):
+
     def worker():
+
         time.sleep(1800)
 
         cursor.execute(
-            "SELECT user_id,status FROM orders WHERE order_id=?",
+            "SELECT status FROM orders WHERE order_id=?",
             (order_id,)
         )
 
         row = cursor.fetchone()
 
-        if row and row[1] == "PENDING":
+        if row and row[0] == "PENDING":
+
             cursor.execute(
                 "UPDATE orders SET status='EXPIRED' WHERE order_id=?",
                 (order_id,)
             )
+
             db.commit()
 
     threading.Thread(target=worker, daemon=True).start()
 
+# =========================================================
+# PRICE CALCULATOR
+# =========================================================
 
-# =========================
-# PRICE
-# =========================
+def price_calculator(usdt: float):
 
-def price_calculator(usdt: float) -> int:
-    if usdt <= 100:
-        return int(usdt * 97)
-    return int(usdt * 96)
+    return int(usdt * USDT_PRICE)
 
-
-# =========================
+# =========================================================
 # START
-# =========================
+# =========================================================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
-        [InlineKeyboardButton("💰 BUY USDT", callback_data="BUY")],
-        [InlineKeyboardButton("🛡 ESCROW DEAL", callback_data="ESCROW")],
-        [InlineKeyboardButton("🛠 SUPPORT", url=f"https://t.me/{SUPPORT_USERNAME}")]
+
+        [
+            InlineKeyboardButton(
+                "💰 Buy USDT",
+                callback_data="BUY"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🛡 Escrow Deal",
+                callback_data="ESCROW"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "📞 Support",
+                url=f"https://t.me/{SUPPORT_USERNAME}"
+            )
+        ]
+
     ]
 
     caption = f"""
-<blockquote>👋 Welcome To <b>USDT SELLER BOT</b></blockquote>
-
-<blockquote>⚡ Trusted • Fast • Secure</blockquote>
-
-<blockquote>💵 PRICE:</blockquote>
-
 <blockquote>
-• 1 - 100 USDT = ₹97
-• 101+ USDT = ₹96
+🌞 <b>WELCOME TO SUN CRYPTO ESCROW</b>
 </blockquote>
 
 <blockquote>
-🔢 LIMITS:
-Min {MIN_USDT} — Max {MAX_USDT} USDT
+🚀 INDIA'S TRUSTED USDT MARKETPLACE
 </blockquote>
 
 <blockquote>
-🛡 Escrow Available
-👇 Buy Button Press Kijiye
+⚡ Instant Deals  
+🔒 Safe Transactions  
+🛡 Secure Escrow  
+💸 Fast Payments  
+</blockquote>
+
+<blockquote>
+💰 LIVE RATE : ₹{USDT_PRICE} / USDT
+</blockquote>
+
+<blockquote>
+📦 LIMITS
+➜ Minimum : {MIN_USDT} USDT
+➜ Maximum : {MAX_USDT} USDT
+</blockquote>
+
+<blockquote>
+🛡 ESCROW CHARGE : ₹0
+</blockquote>
+
+<blockquote>
+🔥 100% Trusted Crypto Service
+🔥 Instant Approval
+🔥 Fastest Support
+🔥 Manual Scam-Free Verification
+</blockquote>
+
+<blockquote>
+👇 CLICK BUTTON BELOW TO START
 </blockquote>
 
 {FOOTER_TAG}
@@ -151,10 +222,9 @@ Min {MIN_USDT} — Max {MAX_USDT} USDT
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-
-# =========================
-# BUY CALLBACK
-# =========================
+# =========================================================
+# BUY
+# =========================================================
 
 async def callback_buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -162,13 +232,17 @@ async def callback_buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["escrow"] = 0
 
     await update.callback_query.message.reply_text(
-        "Kitna USDT chahiye? (Only Number)"
+        f"""
+💰 Enter USDT Amount
+
+📌 Minimum : {MIN_USDT}
+📌 Maximum : {MAX_USDT}
+"""
     )
 
-
-# =========================
-# ESCROW CALLBACK
-# =========================
+# =========================================================
+# ESCROW
+# =========================================================
 
 async def callback_escrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -176,82 +250,125 @@ async def callback_escrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["escrow"] = 1
 
     await update.callback_query.message.reply_text(
-        "🛡 ESCROW MODE ENABLED\n\nKitna USDT chahiye?"
+        f"""
+🛡 ESCROW MODE ENABLED
+
+💰 Enter USDT Amount
+
+📌 Minimum : {MIN_USDT}
+📌 Maximum : {MAX_USDT}
+
+💸 Escrow Charges : ₹0
+"""
     )
 
-
-# =========================
+# =========================================================
 # TEXT HANDLER
-# =========================
+# =========================================================
 
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     txt = update.message.text.strip()
+
     stage = context.user_data.get("stage")
 
-    # =====================
+    # =====================================================
     # AMOUNT
-    # =====================
+    # =====================================================
 
     if stage != "await_wallet" and txt.replace('.', '', 1).isdigit():
 
         usdt = float(txt)
 
         if usdt < MIN_USDT:
+
             return await update.message.reply_text(
-                f"❌ Minimum {MIN_USDT} USDT"
+                f"❌ Minimum Buy Limit Is {MIN_USDT} USDT"
             )
 
         if usdt > MAX_USDT:
+
             return await update.message.reply_text(
-                f"❌ Maximum {MAX_USDT} USDT"
+                f"❌ Maximum Buy Limit Is {MAX_USDT} USDT"
             )
 
         amount = price_calculator(usdt)
 
+        escrow = context.user_data.get("escrow", 0)
+
+        escrow_charge = 0
+
+        total = amount + escrow_charge
+
+        billing = f"""
+🧾 BILLING DETAILS
+
+💰 USDT : {usdt}
+
+💵 Rate : ₹{USDT_PRICE}
+
+💸 Amount : ₹{amount}
+
+🛡 Escrow Charge : ₹0
+
+━━━━━━━━━━━━━━━
+
+💳 TOTAL PAYABLE : ₹{total}
+"""
+
         context.user_data["usdt"] = usdt
         context.user_data["amount"] = amount
+        context.user_data["billing"] = billing
+        context.user_data["escrow_charge"] = escrow_charge
+
         context.user_data["stage"] = "choose_network"
 
         keyboard = [
+
             [
                 InlineKeyboardButton(
-                    "TRC20",
+                    "🌐 TRC20",
                     callback_data="NET:TRC20"
                 ),
 
                 InlineKeyboardButton(
-                    "BEP20",
+                    "🟡 BEP20",
                     callback_data="NET:BEP20"
                 )
             ],
 
             [
                 InlineKeyboardButton(
-                    "ERC20",
+                    "🔵 ERC20",
                     callback_data="NET:ERC20"
                 )
             ]
         ]
 
-        escrow_text = "Enabled ✅" if context.user_data.get("escrow") else "Disabled ❌"
+        escrow_text = "Enabled ✅" if escrow else "Disabled ❌"
 
         return await update.message.reply_text(
             f"""
-💰 USDT: {usdt}
+💎 ORDER SUMMARY
 
-💵 Amount: ₹{amount}
+💰 USDT : {usdt}
 
-🛡 Escrow: {escrow_text}
+💵 Amount : ₹{amount}
 
-👇 Network Select Karo
+🛡 Escrow : {escrow_text}
+
+💸 Escrow Charges : ₹0
+
+━━━━━━━━━━━━━━━
+
+👇 SELECT NETWORK
 """,
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
-    # =====================
+    # =====================================================
     # WALLET
-    # =====================
+    # =====================================================
 
     if stage == "await_wallet":
 
@@ -260,7 +377,14 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         usdt = context.user_data["usdt"]
         amount = context.user_data["amount"]
         network = context.user_data["network"]
+        billing = context.user_data["billing"]
+
         escrow = context.user_data.get("escrow", 0)
+
+        escrow_charge = context.user_data.get(
+            "escrow_charge",
+            0
+        )
 
         cursor.execute("""
         INSERT INTO orders(
@@ -270,21 +394,26 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             network,
             wallet,
             amount,
+            escrow,
+            escrow_charge,
+            billing,
             status,
-            timestamp,
-            escrow
+            timestamp
         )
 
-        VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)
         """, (
+
             update.effective_user.id,
             update.effective_user.username or "",
             usdt,
             network,
             wallet,
             amount,
-            int(time.time()),
-            escrow
+            escrow,
+            escrow_charge,
+            billing,
+            int(time.time())
         ))
 
         db.commit()
@@ -295,37 +424,59 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         context.user_data.clear()
 
-        escrow_line = "🛡 ESCROW DEAL ENABLED\n" if escrow else ""
+        escrow_text = (
+            "🛡 ESCROW ENABLED ✅"
+            if escrow else
+            "🛡 NORMAL DEAL"
+        )
 
         caption = f"""
-📌 Order #{order_id}
+🌞 SUN CRYPTO ESCROW
 
-💰 USDT: {usdt}
+━━━━━━━━━━━━━━━
 
-🌐 Network: {network}
+📌 ORDER ID : #{order_id}
 
-🏦 Wallet:
+{escrow_text}
+
+💰 USDT : {usdt}
+
+🌐 Network : {network}
+
+🏦 Wallet :
 `{wallet}`
 
-💵 Amount: ₹{amount}
+━━━━━━━━━━━━━━━
 
-{escrow_line}
+🧾 BILLING
+
+💵 Rate : ₹{USDT_PRICE}
+
+💸 Amount : ₹{amount}
+
+🛡 Escrow Charge : ₹0
+
+━━━━━━━━━━━━━━━
+
+💳 TOTAL PAYABLE :
+₹{amount}
 
 ━━━━━━━━━━━━━━━
 
 💳 PAYMENT DETAILS
 
-👤 Name:
-NARESH SINGH CHAUHAN
+👤 {ACCOUNT_NAME}
 
-🏧 UPI:
+🏧 UPI :
 `{UPI_ID}`
 
 ━━━━━━━━━━━━━━━
 
-⏳ Payment Within 30 Minutes
+⏳ Complete Payment Within 30 Minutes
 
-📤 Payment Screenshot Yahi Send Kare
+📤 Send Payment Screenshot Here
+
+🔥 Fast Approval Available
 
 {FOOTER_TAG}
 """
@@ -336,10 +487,9 @@ NARESH SINGH CHAUHAN
             parse_mode="Markdown"
         )
 
-
-# =========================
-# CALLBACK HANDLER
-# =========================
+# =========================================================
+# CALLBACKS
+# =========================================================
 
 async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -364,19 +514,25 @@ async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["stage"] = "await_wallet"
 
         return await q.message.reply_text(
-            "📥 Apna Wallet Address Send Karo:"
+            """
+🏦 SEND YOUR WALLET ADDRESS
+
+⚠️ Wrong Address = Fund Loss
+"""
         )
 
-    # =====================
-    # ADMIN ACTIONS
-    # =====================
+    # =====================================================
+    # ADMIN
+    # =====================================================
 
     if q.data.startswith("ADMIN:"):
 
         action, order_id = q.data.split(":")[1:]
+
         order_id = int(order_id)
 
         if q.from_user.id not in ADMINS:
+
             return await q.answer(
                 "Admin Only ❌",
                 show_alert=True
@@ -407,25 +563,29 @@ async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(
                 uid,
                 f"""
-✅ Order #{order_id} Approved
+✅ PAYMENT APPROVED
 
-💸 USDT Releasing Soon
+📌 Order #{order_id}
 
-{FOOTER_TAG}
+💸 USDT Will Be Sent Shortly
+
+🌞 Thank You For Choosing
+Sun Crypto Escrow
 """
             )
 
             try:
+
                 await q.message.edit_caption(
                     caption=f"""
 ✅ ORDER APPROVED
 
 📌 Order #{order_id}
 
-👤 Approved By:
+👤 Approved By :
 @{q.from_user.username}
 
-{FOOTER_TAG}
+🌞 Sun Crypto Escrow
 """
                 )
 
@@ -445,34 +605,36 @@ async def cb_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(
                 uid,
                 f"""
-❌ Order #{order_id} Cancelled
+❌ ORDER CANCELLED
 
-Contact Support:
+📌 Order #{order_id}
+
+📞 Contact Support :
 @{SUPPORT_USERNAME}
 """
             )
 
             try:
+
                 await q.message.edit_caption(
                     caption=f"""
 ❌ ORDER CANCELLED
 
 📌 Order #{order_id}
 
-👤 Cancelled By:
+👤 Cancelled By :
 @{q.from_user.username}
 
-{FOOTER_TAG}
+🌞 Sun Crypto Escrow
 """
                 )
 
             except:
                 pass
 
-
-# =========================
+# =========================================================
 # PHOTO HANDLER
-# =========================
+# =========================================================
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -499,8 +661,9 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     row = cursor.fetchone()
 
     if not row:
+
         return await update.message.reply_text(
-            "❌ No Active Order"
+            "❌ No Active Order Found"
         )
 
     (
@@ -521,7 +684,8 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     db.commit()
 
-    kb = InlineKeyboardMarkup([
+    keyboard = InlineKeyboardMarkup([
+
         [
             InlineKeyboardButton(
                 "✅ APPROVE",
@@ -533,40 +697,43 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 callback_data=f"ADMIN:CANCEL:{order_id}"
             )
         ]
+
     ])
 
-    escrow_text = "YES ✅" if escrow else "NO ❌"
+    escrow_text = "Enabled ✅" if escrow else "Disabled ❌"
 
     admin_caption = f"""
-📥 PAYMENT PROOF RECEIVED
-
-📌 Order ID: #{order_id}
-
-👤 User:
-@{user.username or user.id}
-
-💰 USDT: {usdt}
-
-🌐 Network: {network}
-
-🏦 Wallet:
-`{wallet}`
-
-💵 Amount: ₹{amount}
-
-🛡 Escrow: {escrow_text}
+📥 NEW PAYMENT PROOF
 
 ━━━━━━━━━━━━━━━
 
-💳 PAYMENT DETAILS
+📌 Order ID : #{order_id}
 
-👤 NARESH SINGH CHAUHAN
+👤 User :
+@{user.username or user.id}
+
+💰 USDT : {usdt}
+
+🌐 Network : {network}
+
+🏦 Wallet :
+`{wallet}`
+
+💵 Amount : ₹{amount}
+
+🛡 Escrow : {escrow_text}
+
+━━━━━━━━━━━━━━━
+
+💳 Payment Receiver
+
+👤 {ACCOUNT_NAME}
 
 🏧 {UPI_ID}
 
 ━━━━━━━━━━━━━━━
 
-{FOOTER_TAG}
+🌞 SUN CRYPTO ESCROW
 """
 
     await context.bot.send_photo(
@@ -574,23 +741,30 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=file_id,
         caption=admin_caption,
         parse_mode="Markdown",
-        reply_markup=kb
+        reply_markup=keyboard
     )
 
     await update.message.reply_text(
-        "✅ Screenshot Received\n\nAdmin Verify Karega."
+        """
+✅ SCREENSHOT RECEIVED
+
+⏳ Admin Verification Pending
+
+🔥 Usually Takes 1-5 Minutes
+"""
     )
 
-
-# =========================
+# =========================================================
 # MAIN
-# =========================
+# =========================================================
 
 def main():
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
+    app.add_handler(
+        CommandHandler("start", start)
+    )
 
     app.add_handler(
         CallbackQueryHandler(cb_handler)
@@ -610,10 +784,11 @@ def main():
         )
     )
 
-    print("BOT STARTED ✅")
+    print("🌞 SUN CRYPTO ESCROW STARTED")
 
     app.run_polling()
 
+# =========================================================
 
 if __name__ == "__main__":
     main()
