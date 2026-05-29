@@ -31,15 +31,15 @@ ADMINS = [8564072723, 6792736525, 8179168001,]
 # NEW LOGGER / ADMIN GROUP
 ADMIN_GROUP_ID = -1003933002377
 
-SUPPORT_USERNAME = "SunCryptoEscrow"
+SUPPORT_USERNAME = "USDT_EGRU_BOT"
 
-BOT_NAME = "🌞 Sun Crypto Escrow"
+BOT_NAME = "USDT_EGRU_BOT"
 
 # =========================================================
 # LIMITS
 # =========================================================
 
-MIN_USDT = 500
+MIN_USDT = 30
 MAX_USDT = 10000
 
 # =========================================================
@@ -52,7 +52,7 @@ USDT_PRICE = 98
 # PAYMENT DETAILS
 # =========================================================
 
-UPI_ID = "nareshsinghchauhan1@oksbi"
+UPI_ID = "guriatmg-3@okhdfcbank"
 
 ACCOUNT_NAME = "NARESH SINGH CHAUHAN"
 
@@ -60,9 +60,9 @@ ACCOUNT_NAME = "NARESH SINGH CHAUHAN"
 # IMAGES
 # =========================================================
 
-QR_URL = "https://graph.org/file/a02ca4f82476e234e4465-1fa60e811bf5854014.jpg"
+QR_URL = "https://graph.org/file/99cd5dff4b5b250bcc935-e0ca35350e6546d0f1.jpg"
 
-LOGO_URL = "https://graph.org/file/52009de412b6fa6f88902-0aaa3a3dd322da5d94.jpg"
+LOGO_URL = "https://graph.org/file/88fae9101a390cecae39b-8835e47b14719614e5.jpg"
 
 # =========================================================
 # FOOTER
