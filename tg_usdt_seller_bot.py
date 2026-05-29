@@ -230,7 +230,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("💳 Instant Buy USDT", callback_data="BUY")],
         [InlineKeyboardButton("🛡️ Secure Escrow Deal", callback_data="ESCROW")],
-        [InlineKeyboardButton("💬 Official Support", url=f"https://t.me/{SUPPORT_USERNAME}")]
+        [InlineKeyboardButton("💬 Official Support", url=f"tg://openmessage?user_id=8179168001")]
     ]
 
     caption = f"""
