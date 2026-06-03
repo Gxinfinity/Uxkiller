@@ -72,7 +72,7 @@ logger.info(f"Bot started: {BOT_NAME}")
 logger.info(f"🚀 Loaded {len(ADMINS)} admins successfully from configuration matrix.")
 logger.info(f"📊 Admin Compliance Group ID set to: {ADMIN_GROUP_ID}")
 
-LIMITS = {"MIN": 30, "MAX": 10000}
+LIMITS = {"MIN": 100, "MAX": 10000}
 USDT_PRICE = 98
 
 QR_URL = "https://graph.org/file/99cd5dff4b5b250bcc935-e0ca35350e6546d0f1.jpg"
@@ -230,7 +230,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("💳 Instant Buy USDT", callback_data="BUY")],
         [InlineKeyboardButton("🛡️ Secure Escrow Deal", callback_data="ESCROW")],
-        [InlineKeyboardButton("💬 Official Support", url=f"tg://openmessage?user_id=8179168001")]
+        [InlineKeyboardButton("💬 Official Support", url=f"tg://openmessage?user_id=8761533831")]
     ]
 
     caption = f"""
