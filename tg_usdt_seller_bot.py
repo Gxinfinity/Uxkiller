@@ -72,8 +72,8 @@ logger.info(f"Bot started: {BOT_NAME}")
 logger.info(f"🚀 Loaded {len(ADMINS)} admins successfully from configuration matrix.")
 logger.info(f"📊 Admin Compliance Group ID set to: {ADMIN_GROUP_ID}")
 
-LIMITS = {"MIN": 100, "MAX": 10000}
-USDT_PRICE = 98
+LIMITS = {"MIN": 20, "MAX": 10000}
+USDT_PRICE = 100
 
 QR_URL = "https://graph.org/file/99cd5dff4b5b250bcc935-e0ca35350e6546d0f1.jpg"
 LOGO_URL = "https://graph.org/file/88fae9101a390cecae39b-8835e47b14719614e5.jpg"
